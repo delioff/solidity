@@ -42,6 +42,7 @@ contract ServiceByer {
     
     function byeService() canByeService payable public {
         require(msg.value>=1 ether);
+        lastbye=now;
         registrantsPaid[msg.sender] =1 ether;
         if (msg.value>1 ether)
         {
@@ -53,4 +54,9 @@ contract ServiceByer {
             ConfirmByeService(msg.sender,true,0);
         }
     }
+    
+   function getContractBalance() constant public returns (uint){
+    return this.balance;    
+  }
+
 }
