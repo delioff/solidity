@@ -45,24 +45,61 @@ library SafeMath {
   }
 }
 
-contract VoxPopuli{
-    
-    address owner;
-    uint activemembers;
-    mapping(address => uint) public votes;
-    
-    struct member {
-        address hisaddres; // address member
+library MembersLib{
+  
+  struct member {
+        address hisaddress; // address member
         uint donation;  // ETH donated to contract
         uint date; // timestam for last donation
         uint lastdonation;   // Value of last ETH donation
-    }
+  }
+  
+  struct Data {mapping(address=>member) members;}
+  
+  
+  function add(Data storage self, member currmember)
+    internal
+  {
+    self.members[currmember.hisaddress] = currmember;
+  }
+
+ function update(Data storage self, address addr,uint amount)
+    internal
+  {
+    self.members[addr].date = now;
+    self.members[addr].donation+=amount;
+    self.members[addr].lastdonation=amount;
+  }
+  function remove(Data storage self, address currmember)
+    internal
+  {
+    delete self.members[currmember];
+  }
+
+  function ismember(Data storage self, address addr)
+    internal view returns(bool)
+  {
+     return self.members[addr].hisaddress == addr;
+  }
+  
+  function load(Data storage self, address addr) 
+    internal view returns(member)
+  {
+    return self.members[addr];
+  }
+}
+
+contract VoxPopuli{
+    using MembersLib for MembersLib.Data;
+    MembersLib.Data membersvoxpopuli;
+    address owner;
+    uint activemembers;
     
-    mapping(address => member) public members;
-   
+    mapping(address => uint) public votes;
+    
     function VoxPopuli() public {
         owner = msg.sender;
-        members[owner]=member(msg.sender,0,now,0);
+        membersvoxpopuli.add(MembersLib.member(owner,0,now,0));
         activemembers++;
     }
     
@@ -78,7 +115,7 @@ contract VoxPopuli{
     //member will be added with initial balanse
     function AddMember(address candidate,uint donation) public {
         require(votes[candidate]>SafeMath.div(activemembers,2));
-        members[owner]=member(candidate,donation,now,donation);
+        membersvoxpopuli.add(MembersLib.member(candidate,donation,now,donation));
     }
     //this function will call only if member aggre with new candidate
     function Vote(address candidate) public{
@@ -87,15 +124,14 @@ contract VoxPopuli{
     
     
     function Donate() public payable{
-        require(members[msg.sender].hisaddres==msg.sender);//checks if it is member
-        members[msg.sender].lastdonation=msg.value;
-        members[msg.sender].donation+=msg.value;
-        members[msg.sender].date=now;
+        require(membersvoxpopuli.ismember(msg.sender));//checks if it is member
+        membersvoxpopuli.update(msg.sender,msg.value);
+        
     }
     
     function Remove(address currentmember) OnlyOwner public{ 
-       require(now-members[currentmember].date>1 hours);
-       delete members[currentmember];    
+       require(membersvoxpopuli.load(currentmember).date>1 hours);
+       membersvoxpopuli.remove(currentmember);    
        activemembers--;
     }
    
