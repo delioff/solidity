@@ -45,12 +45,12 @@ library SafeMath {
   }
 }
 
-library MembersLib{
+library MemberLib{
   using SafeMath for uint;
   struct Member {
-        address hisaddress; // address member
-        uint donation;  // ETH donated to contract
-        uint date; // timestam for last donation
+        address hisaddress;  // address member
+        uint donation;       // ETH donated to contract
+        uint date;           // timestamp for last donation
         uint lastdonation;   // Value of last ETH donation
   }
   
@@ -71,7 +71,11 @@ library MembersLib{
      self.date=now;
      self.lastdonation=amount;
   }
-  
+ function getDate(Member storage self)
+    internal view returns (uint)
+  {
+     return self.date;
+  }
 }
 
 contract Owned {
@@ -95,9 +99,9 @@ contract Owned {
 contract VoxPopuli is Owned{
     
     using SafeMath for uint;
-    using MembersLib for MembersLib.Member;
-    MembersLib.Member currentmember;
-    mapping(address=>MembersLib.Member) membersvoxpopuli;
+    using MemberLib for MemberLib.Member;
+    MemberLib.Member currentmember;
+    mapping(address=>MemberLib.Member) membersvoxpopuli;
     uint activemembers;
     
     mapping(address => uint) public votes;
@@ -126,14 +130,13 @@ contract VoxPopuli is Owned{
     }
     
     function remove(address member) onlyOwner public{ 
-       require(membersvoxpopuli[member].date>1 hours);
        delete membersvoxpopuli[member];
        votes[member]=0;
        activemembers.sub(1);
     }
     
      function removeAuto(address member) public{ 
-       require(now-membersvoxpopuli[member].date>1 hours);
+       require(now-membersvoxpopuli[member].getDate()>1 hours);
        delete membersvoxpopuli[member];
        votes[member]=0;
        activemembers.sub(1);
