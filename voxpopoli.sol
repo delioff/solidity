@@ -46,93 +46,97 @@ library SafeMath {
 }
 
 library MembersLib{
-  
-  struct member {
+  using SafeMath for uint;
+  struct Member {
         address hisaddress; // address member
         uint donation;  // ETH donated to contract
         uint date; // timestam for last donation
         uint lastdonation;   // Value of last ETH donation
   }
   
-  struct Data {mapping(address=>member) members;}
-  
-  
-  function add(Data storage self, member currmember)
-    internal
+  function create(Member storage self,address addr,uint amount)
+    internal returns(Member) 
   {
-    self.members[currmember.hisaddress] = currmember;
+    self.hisaddress = addr;
+    self.donation.add(amount);
+    self.date=now;
+    self.lastdonation=amount;
+    return self;
   }
 
- function update(Data storage self, address addr,uint amount)
+ function donate(Member storage self,uint amount)
     internal
   {
-    self.members[addr].date = now;
-    self.members[addr].donation+=amount;
-    self.members[addr].lastdonation=amount;
-  }
-  function remove(Data storage self, address currmember)
-    internal
-  {
-    delete self.members[currmember];
-  }
-
-  function ismember(Data storage self, address addr)
-    internal view returns(bool)
-  {
-     return self.members[addr].hisaddress == addr;
+     self.donation.add(amount);
+     self.date=now;
+     self.lastdonation=amount;
   }
   
-  function load(Data storage self, address addr) 
-    internal view returns(member)
-  {
-    return self.members[addr];
-  }
 }
 
-contract VoxPopuli{
-    using MembersLib for MembersLib.Data;
-    MembersLib.Data membersvoxpopuli;
+contract Owned {
+    
     address owner;
+    
+    function Owned() public {
+        owner = msg.sender;
+    }
+    
+    modifier onlyOwner {
+       require(msg.sender == owner);
+       _;
+    }
+   
+    function kill() public onlyOwner {
+        selfdestruct(owner);
+    }
+}
+
+contract VoxPopuli is Owned{
+    
+    using SafeMath for uint;
+    using MembersLib for MembersLib.Member;
+    MembersLib.Member currentmember;
+    mapping(address=>MembersLib.Member) membersvoxpopuli;
     uint activemembers;
     
     mapping(address => uint) public votes;
     
     function VoxPopuli() public {
         owner = msg.sender;
-        membersvoxpopuli.add(MembersLib.member(owner,0,now,0));
-        activemembers++;
+        membersvoxpopuli[owner]= currentmember.create(owner,0);
+        activemembers.add(1);
     }
     
-    modifier OnlyOwner{
-        require(msg.sender == owner);
-        _;
+    //Member will be added with initial balanse
+    function addMember(address candidate,uint initialdonation) public {
+        require(votes[candidate]>activemembers.div(2));
+        membersvoxpopuli[owner]=currentmember.create(candidate,initialdonation);
     }
     
-    function Kill() public OnlyOwner {
-        selfdestruct(owner);
+    //This function will call only if member aggre with new candidate
+    function vote(address candidate) public view{
+        votes[candidate].add(1);
     }
     
-    //member will be added with initial balanse
-    function AddMember(address candidate,uint donation) public {
-        require(votes[candidate]>SafeMath.div(activemembers,2));
-        membersvoxpopuli.add(MembersLib.member(candidate,donation,now,donation));
-    }
-    //this function will call only if member aggre with new candidate
-    function Vote(address candidate) public{
-        votes[candidate]++;
+    function donate() public payable{
+        require(membersvoxpopuli[msg.sender].hisaddress!=0);//checks if it is member
+        membersvoxpopuli[msg.sender].donate(msg.value);
+     
     }
     
-    
-    function Donate() public payable{
-        require(membersvoxpopuli.ismember(msg.sender));//checks if it is member
-        membersvoxpopuli.update(msg.sender,msg.value);
-        
+    function remove(address member) onlyOwner public{ 
+       require(membersvoxpopuli[member].date>1 hours);
+       delete membersvoxpopuli[member];
+       votes[member]=0;
+       activemembers.sub(1);
     }
     
-    function Remove(address currentmember) OnlyOwner public{ 
-       require(membersvoxpopuli.load(currentmember).date>1 hours);
-       membersvoxpopuli.remove(currentmember);    
-       activemembers--;
+     function removeAuto(address member) public{ 
+       require(now-membersvoxpopuli[member].date>1 hours);
+       delete membersvoxpopuli[member];
+       votes[member]=0;
+       activemembers.sub(1);
     }
    
 }
