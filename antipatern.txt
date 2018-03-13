@@ -1,0 +1,87 @@
+0. Added Safemath library to prevent critical arritmetic errors.
+1. Replace  contract MemberContr with library MemberLib
+From
+
+contract MemberContr {
+    struct Member {
+        address adr;
+        uint joinedAt;
+        uint fundsDonated;
+    }
+    
+    Member member;
+    
+    function MemberContr(address adr) public {
+        member.adr = adr;
+        member.joinedAt = now;
+        member.fundsDonated = 0;
+    }
+    
+    function donated(uint value) public {
+        member.fundsDonated += value;
+    }
+    
+    function get() public view returns (address, uint, uint) {
+        return (member.adr, member.joinedAt, member.fundsDonated);
+    }
+}
+
+To 
+
+library MemberLib {
+    using SafeMath for uint;
+    
+    struct Member {
+         address adr;
+         uint joinedAt;
+         uint fundsDonated;
+    }
+    
+    function remove(Member storage self) public {
+        self.adr = 0;
+    }
+    
+    function initialize(Member storage self, address adr) public {
+        self.adr=adr;
+        self.joinedAt=now;
+    }
+    
+    function donate(Member storage self, uint donatedValue) public {
+        self.fundsDonated.add(donatedValue);
+    }
+}
+
+2. Removed unusable state variables 
+    address[] memberList;
+    address tmp1;
+    uint tmp2;
+    uint tmp3;
+3. Modify onlyMember modifier 
+
+From 
+modifier onlyMember {
+        (tmp1, tmp2, tmp3) = members[msg.sender].get();
+        require(tmp1 == msg.sender);
+        _;
+    }
+	
+	To
+ modifier onlyMember {
+        require(members[msg.sender].adr != 0);
+        _;
+    }	
+	
+4. (tmp1, tmp2, tmp3) = members[msg.sender].get(); The top of the cake :) seting unusable state varibles 	
+5. Remove unusable array address[] memberList and use mapping instead;
+6. Modify 
+function addMember(address adr) public onlyOwner {
+        MemberContr newMember = new MemberContr(adr);
+        
+        members[adr] = newMember;
+        memberList.push(adr);
+    }
+with
+function addMember(address adr) public onlyOwner {
+        members[adr].initialize(adr);
+        memberscount.add(1); 
+    }
