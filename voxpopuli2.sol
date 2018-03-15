@@ -16,13 +16,7 @@ contract Ownable {
         require(msg.sender == owner);
         _;
     }
-    
-    //the owner shouldn't be transferred as this will mess up our members
-    /*function transferOwnership(address newOwner) public onlyOwner {
-        require(newOwner != address(0));
-        OwnershipTransferred(owner, newOwner);
-        owner = newOwner;
-    }*/
+
 }
 
 contract Destructible is Ownable {
@@ -73,9 +67,7 @@ library MemberLib {
     
     struct Member {
         address adr; //an adr value of 0 means that the person is not a member
-        uint totalValue; //in wei
         uint importance; //timestamp
-        uint lastValue; //in wei
     }
     
     
@@ -105,7 +97,7 @@ contract MemberVoter is Ownable, Destructible {
     mapping(address => uint) public proposedBalances;
     //we should increase or decrease this counter as members are added and removed
     uint public totaleMembersVotes;
-    uint public isinitialized;
+    bool public isinitialized;
     
     struct Voting {
         address proposedAddress;
@@ -129,19 +121,21 @@ contract MemberVoter is Ownable, Destructible {
     }
     
     
-    function init(MemberLib.Member[] initialmembers) public  {
-       require(isinitialized == 0);
+    function init(address[] initialadresses,uint[] memberimportances) public  {
+       require(isinitialized == false && initialadresses.length>3);
        uint totalVotePoints = 0;
-       for (uint p = 0; p < initialmembers.length; p++) {
-            members[initialmembers[p].adr]=initialmembers[p];
-            totalVotePoints.add(initialmembers[p].importance);
+       for (uint p = 0; p < initialadresses.length; p++) {
+            members[initialadresses[p]]= MemberLib.Member({adr:initialadresses[p],importance:memberimportances[p]});
+            totalVotePoints.add(memberimportances[p]);
        }
        totaleMembersVotes.add(totalVotePoints);
        emit LogAllVotePoints(totalVotePoints);
+       isinitialized=true;
     }
     
     
     function() public payable {
+        emit LogDonation(msg.sender, msg.value);
     } 
    
     function withdraw() public {
@@ -154,12 +148,9 @@ contract MemberVoter is Ownable, Destructible {
     
     function MakeProposal(address proposedAddress,uint amaunt) public onlyOwner returns (bytes32) {
         bytes32 id = keccak256(proposedAddress, now); //the ID of a vote is the unique hash of the member and the current time 
-        
-        votings[id] = Voting({proposedMember: proposedAddress, votesFor: 0, votesAgainst: 0,amaunt:amaunt});
+        votings[id] = Voting({proposedAddress: proposedAddress, votesFor: 0, votesAgainst: 0,amaunt:amaunt});
         activeVotings = activeVotings.add(1);
-        
         emit LogVotingStarted(id);
-        
         return id;
     }
     
@@ -169,7 +160,7 @@ contract MemberVoter is Ownable, Destructible {
     }
     
     function vote(bytes32 id, bool voteFor) public onlyMember {
-        require(votings[id].proposedMember != 0); //the voting should exist
+        require(votings[id].proposedAddress != 0); //the voting should exist
         require(!votings[id].voted[msg.sender]);
         
         votings[id].voted[msg.sender] = true;
