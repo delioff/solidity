@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<script type="text/javascript" src="script.js"></script>
+		<style>
+			body {
+				background-color: #00BFFF;
+			}
+
+			img.picture {   
+				position: fixed;
+			    bottom: 0;
+			    right: 0;
+				}
+
+		</style>
+
+
+		<script type="text/javascript">
+	function image(img) {
+    var src = img.src;
+    window.open(src);
+}
+</script>
+	<img class="picture" src="Pikachu.png" height="150" size="150" align="bottom">
+	</head>
+
+	<body>
+	<p id="message">Hello!</p><br>
+
+
+	<input type="text" id="input"><br>
+	<br>
+	<input type="button" onclick="onButtonPressed()" value="Submit"><br>
+	<br>
+	<input type="button" onclick="onSecondButtonPressed()" value="Read"><br>
+
+
+	</body>
+</html>
