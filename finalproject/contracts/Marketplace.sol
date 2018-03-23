@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.19;
 
 library SafeMath {
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -59,7 +59,7 @@ library ProductLib {
 contract Ownable {
     address public owner;
     
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    //event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     
     
     function Ownable() public {
@@ -71,12 +71,12 @@ contract Ownable {
         _;
     }
     
-    //the owner shouldn't be transferred as this will mess up our members
-    /*function transferOwnership(address newOwner) public onlyOwner {
+    
+    function transferOwnership(address newOwner) public onlyOwner {
         require(newOwner != address(0));
-        OwnershipTransferred(owner, newOwner);
+        //emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
-    }*/
+    }
 }
 
 
@@ -87,25 +87,26 @@ contract Marketplace is Ownable{
     mapping(bytes32 => ProductLib.Product) public products;
     bytes32[] store;
     //define our contract events
-    event LogNewProduct(bytes32 indexed id,uint quantity);
+    //event LogNewProduct(bytes32 indexed id,uint quantity);
     
 	
     function buy(bytes32 ID, uint quantity) public payable {
         require(products[ID].quantity>=quantity);
-        require(quantity.mul(products[ID].price)<=msg.value);
+        require(quantity.mul(getPrice(ID,quantity))<=msg.value);
+        
         products[ID].quantity.sub(quantity);
     }
     
-    function update(bytes32 ID, uint newQuantity) view public {
+    function update(bytes32 ID, uint newQuantity) onlyOwner view public {
         products[ID].updatequantity(newQuantity);
     }
     
     //creates a new product and returns its ID
-    function newProduct(string name, uint price, uint quantity) public returns(bytes32) {
+    function newProduct(string name, uint price, uint quantity) onlyOwner public returns(bytes32) {
 	     bytes32 id = keccak256(name); 
 		 products[id].initialize(id,quantity,price,name);
 		 store.push(id);
-		 emit LogNewProduct(id,quantity);
+		 //emit LogNewProduct(id,quantity);
 		 return id;
 	}
     
