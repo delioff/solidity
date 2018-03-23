@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Pokemons DAPP</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="./app.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Pokemons DAPP</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+
+  <br/>
+  <div class="container">
+    <div style="display: none;" class="alert alert-success" id="msg"></div>
+    <div style="display: none;" class="alert alert-error" id="msg-error"></div>
+    <form id="claim-pokemon">
+      <div class="form-row">
+        <div class="col">
+          <div class="form-group">
+            <label for="pokemon-index" class="control-label">Claim Pokemon</label>
+            <div>
+              <input type="text" name="pokemon-index" class="form-control" id="pokemon-index" placeholder="Pokemon Index" required="required"></input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row float-right">
+        <div class="col-sm-10">
+          <button type="submit" class="btn btn-secondary">Submit</button>
+        </div>
+      </div>
+    </form>
+    <br />
+    <br />
+    <form id="read-pokemons-by-address">
+      <div class="form-row">
+        <div class="col">
+          <div class="form-group">
+            <label for="pokemons-address" class="control-label">Read Pokemons By Address</label>
+            <div>
+              <input type="text" name="pokemons-address" class="form-control" id="pokemons-address" placeholder="Pokemons Address" required="required"></input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row float-right">
+        <div class="col-sm-10">
+          <button type="submit" class="btn btn-secondary">Submit</button>
+        </div>
+      </div>
+    </form>
+    <br />
+    <br />
+    <form id="read-holders-by-pokemon-index">
+      <div class="form-row">
+        <div class="col">
+          <div class="form-group">
+            <label for="pokemon-index" class="control-label">Read Holders By Pokemon Index</label>
+            <div>
+              <input type="text" name="pokemon-index" class="form-control" id="pokemon-index" placeholder="Pokemon Index" required="required"></input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row float-right">
+        <div class="col-sm-10">
+          <button type="submit" class="btn btn-secondary">Submit</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</body>
+
+</html>
