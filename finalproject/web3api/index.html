@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<script type="text/javascript" src="script.js"></script>
+		<style>
+			body {
+				background-color: #00BFFF;
+			}
+
+			img.picture {   
+				position: fixed;
+			    bottom: 0;
+			    right: 0;
+				}
+
+		</style>
+
+
+		<script type="text/javascript">
+	function image(img) {
+    var src = img.src;
+    window.open(src);
+}
+</script>
+	<img class="picture" src="logo.jpg" height="150" size="150" align="bottom">
+	</head>
+
+	<body>
+	<p id="message">Marketplace!</p><br>
+
+
+	<input type="text" id="name"><br>
+	<input type="text" id="price"><br>
+	<input type="text" id="quantity"><br>
+	<br>
+	<input type="button" onclick="onAddProduct()" value="Submit"><br>
+	<br>
+	<input type="text" id="idproduct"><br>
+	<input type="button" onclick="onGetProduct()" value="Read"><br>
+
+
+	</body>
+</html>
