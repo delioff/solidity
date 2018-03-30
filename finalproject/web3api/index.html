@@ -1,42 +1,58 @@
 <html>
 	<head>
-		<script type="text/javascript" src="script.js"></script>
-		<style>
-			body {
-				background-color: #00BFFF;
-			}
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script type="text/javascript" src="script.js"></script>
 
-			img.picture {   
-				position: fixed;
-			    bottom: 0;
-			    right: 0;
-				}
-
-		</style>
-
-
-		<script type="text/javascript">
-	function image(img) {
-    var src = img.src;
-    window.open(src);
-}
-</script>
-	<img class="picture" src="logo.jpg" height="150" size="150" align="bottom">
+	
+	
 	</head>
 
 	<body>
-	<p id="message">Marketplace!</p><br>
+	
+	<div  class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+		<h2 class="w3-center">Marketplace!</h2>
+		 
+		<div class="w3-row w3-section">
+		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-cart-plus"></i></div>
+			<div class="w3-rest">
+			  <input class="w3-input w3-border" id="name" name="first" type="text" placeholder="Product Name">
+			</div>
+		</div>
+		
+		<div class="w3-row w3-section">
+		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-database"></i></div>
+			<div class="w3-rest">
+			  <input class="w3-input w3-border" name="quantity" type="text" placeholder="Quantity">
+			</div>
+		</div>
+		
+		<div class="w3-row w3-section">
+		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-btc"></i></div>
+			<div class="w3-rest">
+			  <input class="w3-input w3-border" name="price" type="text" placeholder="Price">
+			</div>
+		</div>
+		
+				
+		<p class="w3-center">
+		<button class="w3-button w3-section w3-blue w3-ripple" onclick="onAddProduct()"> Add Product </button>
+		</p>
 
-
-	<input type="text" id="name"><br>
-	<input type="text" id="price"><br>
-	<input type="text" id="quantity"><br>
-	<br>
-	<input type="button" onclick="onAddProduct()" value="Submit"><br>
-	<br>
-	<input type="text" id="idproduct"><br>
-	<input type="button" onclick="onGetProduct()" value="Read"><br>
-
-
+		<div class="w3-row w3-section">
+			<div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-search"></i></div>
+			  <div class="w3-rest">
+				<input class="w3-input w3-border" id="idproduct" name="Id" type="text" placeholder="Id">
+			  </div>
+		  </div>
+		  
+				  
+		  <p class="w3-center">
+		  <button class="w3-button w3-section w3-blue w3-ripple" onclick="onGetProduct()"> Check Product </button>
+		  </p>
+	</div>
+    <p class="w3-center" id="message">Marketplace!</p><br>
 	</body>
 </html>

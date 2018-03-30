@@ -11,7 +11,7 @@ window.onload = function(){
 
 var contractInstance;
 
-var abi = [
+var abi =[
 	{
 		"constant": false,
 		"inputs": [
@@ -253,7 +253,7 @@ function onAddProduct(){
 			displayMessage("You added new product!");
 		} 
 		else {
-		displayMessage("You cant' add product!");
+			displayMessage(err);
 		}
 	});
 	

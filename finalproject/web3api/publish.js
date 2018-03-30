@@ -228,6 +228,7 @@ var publishData = {
 Contract.new(publishData, function(err, contractInstance) {
 	if(!err) {
 		if(contractInstance.address) { //if the contract has an address aka if the transaction is mined
+			console.log("owner is :", acc);
 			console.log("New contract address is :", contractInstance.address);
 		}
 	} else {
