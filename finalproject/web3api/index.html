@@ -4,10 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script type="text/javascript" src="script.js"></script>
-
-	
-	
+		<script type="text/javascript" src="script.js"></script>
 	</head>
 
 	<body>
@@ -25,14 +22,14 @@
 		<div class="w3-row w3-section">
 		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-database"></i></div>
 			<div class="w3-rest">
-			  <input class="w3-input w3-border" name="quantity" type="text" placeholder="Quantity">
+			  <input class="w3-input w3-border" name="quantity" id="quantity" type="text" placeholder="Quantity">
 			</div>
 		</div>
 		
 		<div class="w3-row w3-section">
 		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-btc"></i></div>
 			<div class="w3-rest">
-			  <input class="w3-input w3-border" name="price" type="text" placeholder="Price">
+			  <input class="w3-input w3-border" name="price" id="price" type="text" placeholder="Price">
 			</div>
 		</div>
 		
@@ -51,7 +48,34 @@
 				  
 		  <p class="w3-center">
 		  <button class="w3-button w3-section w3-blue w3-ripple" onclick="onGetProduct()"> Check Product </button>
-		  </p>
+			</p>
+			
+			<h2 class="w3-center">Buy</h2>
+		 
+		<div class="w3-row w3-section">
+		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-cart-plus"></i></div>
+			<div class="w3-rest">
+			  <input class="w3-input w3-border" id="buyname" name="first" type="text" placeholder="Product Name">
+			</div>
+		</div>
+		
+		<div class="w3-row w3-section">
+		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-database"></i></div>
+			<div class="w3-rest">
+			  <input class="w3-input w3-border" name="buyquantity" id="buyquantity" type="text" placeholder="Quantity">
+			</div>
+		</div>
+		
+		<div class="w3-row w3-section">
+		  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-btc"></i></div>
+			<div class="w3-rest">
+			  <input class="w3-input w3-border" name="buyprice" id="buyprice" type="text" placeholder="Calculated Price" disabled/>
+			</div>
+		</div>
+		<p class="w3-center">
+			<button class="w3-button w3-section w3-blue w3-ripple" onclick="onCalcPrice()"> Check Product </button>
+			<button class="w3-button w3-section w3-blue w3-ripple" onclick="onBuyProduct()"> Buy </button>
+		</p>
 	</div>
     <p class="w3-center" id="message">Marketplace!</p><br>
 	</body>

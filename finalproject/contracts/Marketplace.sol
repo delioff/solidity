@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.21;
 
 library SafeMath {
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -87,14 +87,14 @@ contract Marketplace is Ownable{
     mapping(bytes32 => ProductLib.Product) public products;
     bytes32[] store;
     //define our contract events
-    //event LogNewProduct(bytes32 indexed id,uint quantity);
+    event LogNewProduct(bytes32 indexed id,uint quantity);
     
 	
     function buy(bytes32 ID, uint quantity) public payable {
         require(products[ID].quantity>=quantity);
-        require(quantity.mul(getPrice(ID,quantity))<=msg.value);
+        require(getPrice(ID,quantity)<=msg.value);
         
-        products[ID].quantity.sub(quantity);
+        products[ID].quantity=products[ID].quantity.sub(quantity);
     }
     
     function update(bytes32 ID, uint newQuantity) onlyOwner view public {
@@ -106,7 +106,7 @@ contract Marketplace is Ownable{
 	     bytes32 id = keccak256(name); 
 		 products[id].initialize(id,quantity,price,name);
 		 store.push(id);
-		 //emit LogNewProduct(id,quantity);
+		 emit LogNewProduct(id,quantity);
 		 return id;
 	}
     

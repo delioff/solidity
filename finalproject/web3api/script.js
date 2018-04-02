@@ -217,9 +217,9 @@ var abi =[
 	}
 ]; //TODO
 
-var address = "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"; //TODO
+var address = "0xde8ceee9c04db742b1e9657648d54e2136e83573"; //TODO0x5b0b6cb7f078a8f5e9c72702b0ce25e29397389d
 var acc;
-
+var canbue=false;
 function init(){
 	var Contract = web3.eth.contract(abi);
 	contractInstance = Contract.at(address);
@@ -241,16 +241,20 @@ function getTextInput(el){
 	
 	return el.value;
 }
-
+function setTextInput(el,val){
+	var el = document.getElementById(el);
+	
+	el.value=val;
+}
 function onAddProduct(){
 	updateAccount();
 
 	var name = getTextInput("name");
     var price= getTextInput("price");
     var quantity= getTextInput("quantity");
-	contractInstance.newProduct.call(name,price,quantity, {"from": acc}, function(err, res){
+	contractInstance.newProduct(name,price,quantity, {"from": acc}, function(err, res){
 		if(!err){
-			displayMessage("You added new product!");
+			displayMessage("You added new product! "+res.toString());
 		} 
 		else {
 			displayMessage(err);
@@ -266,14 +270,10 @@ function onGetProduct(){
 	updateAccount();
 
 	var input = getTextInput("idproduct");
-
-	var counter = input.length;
-
-
-	
-		contractInstance.getPokemonsByPerson.call(input, function(err, res) {
+	var id = web3.sha3(input);
+	contractInstance.getProduct.call(id, function(err, res) {
 		if(!err){
-			displayMessage(res.valueOf());
+			displayMessage("Name:  " + res[0]+ "   Quantity:  " +res[2] +"   Price  " +res[1] );
 		} 
 		else {
 			displayMessage("Something went horribly wrong.", err);
@@ -283,3 +283,54 @@ function onGetProduct(){
 	
 };
 
+function onCalcPrice(){
+	updateAccount();
+
+	var name = getTextInput("buyname");
+	var quantity= getTextInput("buyquantity");
+    var id = web3.sha3(name);
+	contractInstance.getProduct.call(id, function(err, res) {
+		if(!err){
+			if (res[2].toNumber()<web3.toBigNumber(quantity))
+			{
+				displayMessage("No enogh quantity.");
+				canbue=false;
+				return;
+			}
+			setTextInput("buyprice",res[1].toNumber()*web3.toBigNumber(quantity));
+			displayMessage("Продажната цена е "+getTextInput("buyprice"));
+			canbue=true;
+			
+		} 
+		else {
+			displayMessage("Something went horribly wrong.", err);
+			canbue=false;
+		}
+	});
+};
+function onBuyProduct(){
+	if (!canbue){
+        displayMessage("You can't bue product!");
+		return;
+	} 
+	updateAccount();
+
+	var name = getTextInput("buyname");
+	var quantity= getTextInput("buyquantity");
+	var price= getTextInput("buyprice");
+    var id = web3.sha3(name);
+	contractInstance.buy(id,quantity,{"from": acc,"value": price,"gas": 3000000},function(err, res) {
+		if(!err){
+			if (res[2].toNumber()<web3.toBigNumber(quantity))
+			{
+				displayMessage("No enogh quantity.");
+				return;
+			}
+			setTextInput("buyprice",res[1].toNumber()*web3.toBigNumber(quantity));
+			displayMessage("Продажната цена е "+getTextInput("bueprice"));
+		} 
+		else {
+			displayMessage(err);
+		}
+	});
+};
